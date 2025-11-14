@@ -20,26 +20,31 @@ public abstract class RentItem {
         this.baseRenta = baseRenta;
         this.cantidadCopias = 0;
     }
-    
+
     abstract double pagoRenta(int dias);
-    
-    public int getCodigoItem(){
+
+    public int getCodigoItem() {
         return codigoItem;
     }
-    
-    public String getNombreItem(){
+
+    public String getNombreItem() {
         return nombreItem;
     }
-    
-    public double getBaseRenta(){
+
+    public double getBaseRenta() {
         return baseRenta;
     }
-    
-    public int getCantidadCopias(){
+
+    public int getCantidadCopias() {
         return cantidadCopias;
     }
-    
-    public String toString(){
-        return "Codigo: "+codigoItem+"\n Nombre: "+nombreItem+"\n Base Renta: "+baseRenta+"\nCantidad de copias: "+cantidadCopias;
+
+    public ImageIcon imgItem() {
+        return imgItem;
     }
+
+    public String toString() {
+        return "Codigo: " + codigoItem + "\n Nombre: " + nombreItem + "\n Base Renta: " + baseRenta + "\nCantidad de copias: " + cantidadCopias;
+    }
+
 }
