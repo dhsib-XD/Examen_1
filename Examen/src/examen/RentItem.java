@@ -21,7 +21,7 @@ public abstract class RentItem {
         this.cantidadCopias = 0;
     }
     
-    abstract double pagoRenta(int días);
+    abstract double pagoRenta(int dias);
     
     public int getCodigoItem(){
         return codigoItem;
