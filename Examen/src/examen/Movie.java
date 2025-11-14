@@ -10,6 +10,7 @@ import java.util.Calendar;
  *
  * @author Nathan
  */
+
 public class Movie extends RentItem {
 
     Calendar fechaEstreno;
@@ -28,15 +29,14 @@ public class Movie extends RentItem {
     }
 
     public String toString() {
-        super.toString();
-        return "\n estado" + "\nMovie";
+        return super.toString() + "\n estado" + getEstado() + "\nMovie";
     }
 
     public String getEstado() {
         Calendar fechaLimite = Calendar.getInstance();
         fechaLimite.add(Calendar.MONTH, -3);
 
-        if (!fechaEstreno.before(fechaLimite) && !fechaEstreno.after(fechaEstreno)) {
+        if (fechaEstreno.after(fechaLimite) || fechaEstreno.equals(fechaLimite)) {
             return "ESTRENO";
         }
         return "NORMAL";
@@ -46,24 +46,25 @@ public class Movie extends RentItem {
         String estado = getEstado();
         int diasExtras;
         double baseRenta = super.baseRenta;
-        double montoTotal=0;
+        double montoTotal = 0;
 
-        if (estado.equalsIgnoreCase("ESTRENO") && dias > 2) {
-            diasExtras = dias - 2;
-            montoTotal=(baseRenta*2)+(diasExtras*50);
-        } else {
-            montoTotal=baseRenta*dias;
+        if (estado.equalsIgnoreCase("ESTRENO")) {
+            if(dias>2){
+                diasExtras=dias-2;
+                montoTotal=(baseRenta*2)+(diasExtras*50);
+            }else{
+                montoTotal=dias*baseRenta;
+            }
+        }else{
+            if(dias>5){
+                diasExtras=dias-5;
+                montoTotal=(baseRenta*5)+(diasExtras*30);
+            }else{
+                montoTotal=dias*baseRenta;
+            }
         }
-        
-        if (estado.equalsIgnoreCase("NORMAL") && dias > 5) {
-            diasExtras = dias - 5;
-            montoTotal=(baseRenta*5)+(diasExtras*30);
-        } else {
-            montoTotal=baseRenta*dias;
-        }
-        
         return montoTotal;
-        
+
     }
 
 }
