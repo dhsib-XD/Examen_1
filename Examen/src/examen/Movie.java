@@ -42,7 +42,7 @@ public class Movie extends RentItem {
         return "NORMAL";
     }
 
-    double pagoRenta(int dias) {
+    public double pagoRenta(int dias) {
         String estado = getEstado();
         int diasExtras;
         double baseRenta = super.baseRenta;

@@ -22,7 +22,7 @@ public abstract class RentItem {
     }
 
     abstract double pagoRenta(int dias);
-
+    
     public int getCodigoItem() {
         return codigoItem;
     }
