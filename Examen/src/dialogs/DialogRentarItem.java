@@ -5,6 +5,7 @@
 package dialogs;
 
 import examen.AppGeneral;
+import examen.Game;
 import examen.Movie;
 import examen.RentItem;
 import javax.swing.*;
@@ -183,7 +184,7 @@ public class DialogRentarItem extends JDialog {
             );
 
             // Imagen
-            ImageIcon icon = itemEncontrado.getImagen();
+            ImageIcon icon = itemEncontrado.imgItem();
             if (icon != null) {
                 Image img = icon.getImage().getScaledInstance(150, 180, Image.SCALE_SMOOTH);
                 lblImagenPreview.setIcon(new ImageIcon(img));
@@ -231,7 +232,7 @@ public class DialogRentarItem extends JDialog {
                 return;
             }
 
-            double total = itemEncontrado.pagoRenta(dias);
+            double total=itemEncontrado.pagoRenta(dias);
 
             JOptionPane.showMessageDialog(this,
                     "Ítem: " + itemEncontrado.getNombreItem() + "\n"

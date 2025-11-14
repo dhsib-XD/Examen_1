@@ -11,13 +11,12 @@ import javax.swing.JOptionPane;
 public class Game extends RentItem implements MenuActions {
 
     Calendar publi;
-    ArrayList<String> tecnicas;
-    private static final double renta = 20;
+    ArrayList<String> especificaciones;
 
     public Game(int codigoItem, String nombreItem, double baseRenta) {
         super(codigoItem, nombreItem, baseRenta);
         this.publi = Calendar.getInstance();
-        this.tecnicas = new ArrayList<>();
+        this.especificaciones = new ArrayList<>();
         this.cantidadCopias = 0;
 
     }
@@ -27,99 +26,130 @@ public class Game extends RentItem implements MenuActions {
         return "Juego" + this.nombreItem + ", Codigo : " + this.codigoItem + ")";
     }
 
-    ;
-
     @Override
-    double pagoRenta(int dias) {
-        return renta * dias;
+    public double pagoRenta(int dias) {
+        return 20 * dias;
     }
-// Aqui el Submenu Para ejecutarOpcion segun el documento
 
-    @Override
     public void subMenu() {
+        String menu
+                = "SUBMENÚ DE GAME\n\n"
+                + "1. Actualizar fecha de publicación\n"
+                + "2. Agregar especificación\n"
+                + "3. Mostrar especificaciones\n"
+                + "4. Cerrar\n\n"
+                + "Ingrese una opción:";
 
+        String opcionStr = JOptionPane.showInputDialog(null, menu, "Submenú Game", JOptionPane.QUESTION_MESSAGE);
+
+        if (opcionStr == null) {
+            return;
+        }
+
+        try {
+            int opcion = Integer.parseInt(opcionStr);
+            ejecutarOpcion(opcion);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Ingrese una opción válida.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     @Override
     public void ejecutarOpcion(int opcion) {
-        switch (opcion) {
-            case 1: {
-                this.actualizarFecha();
-                break;
-            }
-            case 2: {
-                this.listEspecificaciones();
-                break;
-            }
-            case 3: {
-                this.agregarEspecificacion();
-                break;
-            }
-            case 0:
 
-                JOptionPane.showMessageDialog(null, "Volviendo al menú principal...");
+        switch (opcion) {
+
+            case 1:
+                actualizarFecha();
                 break;
+
+            case 2:
+                agregarEspecificacion();
+                break;
+
+            case 3:
+                mostrarEspecificaciones();
+                break;
+
             default:
-                JOptionPane.showMessageDialog(null, "Opción no válida.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Opción inválida.", "Error", JOptionPane.ERROR_MESSAGE);
+                break;
         }
     }
 
-    public void setFecha(int year, int mes, int dia) {
-        this.publi.set(year, mes - 1, dia);
-        JOptionPane.showMessageDialog(null, "La fecha de publicacion fue actualizada");
+    private void agregarEspecificacion() {
+        String espec = JOptionPane.showInputDialog(null, "Ingrese la especificación:", "Agregar Especificación", JOptionPane.QUESTION_MESSAGE);
+
+        if (espec != null && !espec.trim().isEmpty()) {
+            especificaciones.add(espec.trim());
+            JOptionPane.showMessageDialog(null, "Especificación agregada.");
+        }
     }
 
-    public void listEspecificaciones() {
+    private void mostrarEspecificaciones() {
 
-        if (this.tecnicas.isEmpty()) {
-
-            JOptionPane.showMessageDialog(null, "No hay especificaciones registradas para este juego.");
+        if (especificaciones.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No hay especificaciones registradas.");
             return;
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append("Especificaciones de ").append(this.nombreItem).append(":\n\n");
-        for (String especificacion : this.tecnicas) {
-            sb.append("- ").append(especificacion).append("\n");
+
+        String texto = listarEspecificaciones(0);
+
+        JOptionPane.showMessageDialog(null, texto, "Especificaciones", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private String listarEspecificaciones(int index) {
+        if (index == especificaciones.size()) {
+            return "";
         }
-        JOptionPane.showMessageDialog(null, sb.toString());
+        return "- " + especificaciones.get(index) + "\n" + listarEspecificaciones(index + 1);
+    }
+
+    private String construirEspecificacionesRec(int index) {
+        if (index == especificaciones.size()) {
+            return "";
+        }
+        return "- " + especificaciones.get(index) + "\n" + construirEspecificacionesRec(index + 1);
     }
 
     private void actualizarFecha() {
+
+        String input = JOptionPane.showInputDialog(
+                null,
+                "Ingrese la fecha en formato dd/MM/yyyy:",
+                "Actualizar Fecha",
+                JOptionPane.QUESTION_MESSAGE
+        );
+
+        if (input == null || input.trim().isEmpty()) {
+            return;
+        }
+
         try {
-            String Syear = JOptionPane.showInputDialog(null, "Ingrese el nuevo año:", "Actualizar Fecha", JOptionPane.QUESTION_MESSAGE);
-            if (Syear == null) {
-                return;
-            }
+            String[] partes = input.split("/");
+            int dia = Integer.parseInt(partes[0]);
+            int mes = Integer.parseInt(partes[1]);
+            int anio = Integer.parseInt(partes[2]);
 
-            String Smes = JOptionPane.showInputDialog(null, "Ingrese el nuevo mes (1-12):", "Actualizar Fecha", JOptionPane.QUESTION_MESSAGE);
-            if (Smes == null) {
-                return;
-            }
+            publi.set(anio, mes - 1, dia);
 
-            String Sdia = JOptionPane.showInputDialog(null, "Ingrese el nuevo día:", "Actualizar Fecha", JOptionPane.QUESTION_MESSAGE);
-            if (Sdia == null) {
-                return;
-            }
+            JOptionPane.showMessageDialog(null,
+                    "Fecha actualizada correctamente.",
+                    "Éxito",
+                    JOptionPane.INFORMATION_MESSAGE);
 
-            int year = Integer.parseInt(Syear);
-            int mes = Integer.parseInt(Smes);
-            int dia = Integer.parseInt(Sdia);
-
-            this.setFecha(year, mes, dia);
-
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Error: Ingrese solo números válidos.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Formato inválido. Use dd/MM/yyyy.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
-
-    public void agregarEspecificacion() {
-        String especificacion = JOptionPane.showInputDialog(null, "Ingrese la nueva especificacion", "Agregar especificacion", JOptionPane.QUESTION_MESSAGE);
-
-        if (especificacion != null && !especificacion.trim().isEmpty()) {
-            this.tecnicas.add(especificacion);
-            JOptionPane.showMessageDialog(null, "¡Especificación '" + especificacion + "' agregada!");
-        }
+    
+    public static void main(String [] args)
+    {
+        
     }
-;
-
 }

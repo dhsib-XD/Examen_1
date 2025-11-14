@@ -4,10 +4,14 @@
  */
 package dialogs;
 
+import examen.AppGeneral;
+import examen.Game;
+import examen.Movie;
 import examen.RentItem;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -26,6 +30,8 @@ public class DialogAgregarItem extends JDialog {
     private JButton btnCancelar;
 
     private ImageIcon imagenSeleccionada;
+    private RentItem itemSeleccionado;
+    private ArrayList<RentItem> items=AppGeneral.getItems();
 
     private final Color NEGRO = new Color(10, 10, 10);
     private final Color AZUL = new Color(30, 144, 255);
@@ -130,24 +136,103 @@ public class DialogAgregarItem extends JDialog {
 
         btnGuardar.addActionListener(e -> {
             String tipo = (String) cboTipo.getSelectedItem();
-            String codigo = txtCodigo.getText().trim();
+            String codigoStr = txtCodigo.getText().trim();
             String nombre = txtNombre.getText().trim();
-            String precio = txtPrecio.getText().trim();
+            String precioStr = txtPrecio.getText().trim();
 
-            StringBuilder sb = new StringBuilder();
-            sb.append("Tipo: ").append(tipo).append("\n");
-            sb.append("Código: ").append(codigo).append("\n");
-            sb.append("Nombre: ").append(nombre).append("\n");
-            sb.append("Precio base: ").append(precio).append("\n");
-            sb.append("Imagen: ").append(imagenSeleccionada != null ? "Sí" : "No").append("\n\n");
-            sb.append("Aquí validarías que el código sea único y guardarías el ítem.");
+            if (codigoStr.isEmpty() || nombre.isEmpty() || precioStr.isEmpty()) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "No puedes dejar campos vacios.",
+                        "Datos incompletos",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
+
+            int codigo;
+            double precioBase;
+
+            try {
+                codigo = Integer.parseInt(codigoStr);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "El código debe ser un valor numerico y entero.",
+                        "Código inválido",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+
+            try {
+                precioBase = Double.parseDouble(precioStr);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "El precio base debe ser un número.",
+                        "Precio inválido",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+
+            if ("Game".equals(tipo)) {
+                precioBase = 20.0;
+            }
+
+            if (imagenSeleccionada == null) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Debes seleccionar una imagen.",
+                        "Imagen requerida",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
+
+            for (RentItem ri : items) {
+                if (ri.getCodigoItem() == codigo) {  
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Ya existe un ítem con ese código.",
+                            "Código duplicado",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                    return;
+                }
+            }
+
+            RentItem nuevoItem = null;
+
+            if ("Movie".equals(tipo)) {
+                nuevoItem = new Movie(codigo, nombre, precioBase);
+            } else if ("Game".equals(tipo)) {
+                nuevoItem = new Game(codigo, nombre, precioBase);
+            }
+
+            if (nuevoItem == null) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "No se pudo crear el ítem.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+
+            nuevoItem.setImagen(imagenSeleccionada);
+
+            items.add(nuevoItem);
 
             JOptionPane.showMessageDialog(
                     this,
-                    sb.toString(),
-                    "Previsualización - Solo visual",
+                    "Ítem agregado correctamente.",
+                    "Éxito",
                     JOptionPane.INFORMATION_MESSAGE
             );
+
+            dispose(); 
         });
     }
 
@@ -226,9 +311,8 @@ public class DialogAgregarItem extends JDialog {
             lblImagenPreview.setText("");
         }
     }
-    
-    public static void main(String [] args)
-    {
-        
+
+    public static void main(String[] args) {
+
     }
 }

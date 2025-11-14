@@ -22,10 +22,10 @@ public class SistemaRenta extends JFrame {
     private JButton btnImprimir;
     private JButton btnSalir;
     private JLabel lblEstado;
-    
+
     private final Color AZUL = new Color(30, 144, 255);
     private final Color NEGRO = new Color(10, 10, 10);
-    
+    private ArrayList<RentItem> items = AppGeneral.getItems();
 
     public SistemaRenta() {
 
@@ -80,7 +80,60 @@ public class SistemaRenta extends JFrame {
             DialogRentarItem dlg = new DialogRentarItem(this);
             dlg.setVisible(true);
         });
-        btnSubmenu.addActionListener(e -> setEstado("Opción seleccionada: Submenú"));
+
+        btnSubmenu.addActionListener(e -> {
+
+            String codigoStr = JOptionPane.showInputDialog(
+                    this,
+                    "Ingrese el código del ítem:",
+                    "Ejecutar Submenú",
+                    JOptionPane.QUESTION_MESSAGE
+            );
+
+            if (codigoStr == null || codigoStr.trim().isEmpty()) {
+                return;
+            }
+
+            int codigo;
+            try {
+                codigo = Integer.parseInt(codigoStr.trim());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "El código debe ser numérico.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+
+            RentItem encontrado = null;
+
+            for (RentItem ri : items) {
+                if (ri.getCodigoItem() == codigo) {
+                    encontrado = ri;
+                    break;
+                }
+            }
+
+            if (encontrado == null) {
+                JOptionPane.showMessageDialog(this, "Item No Existe");
+                return;
+            }
+
+
+            if (encontrado instanceof MenuActions) {
+                ((MenuActions) encontrado).subMenu();
+            } else {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Este ítem no tiene submenú disponible.",
+                        "Sin submenú",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
+        });
+
         btnImprimir.addActionListener(e -> setEstado("Opción seleccionada: Imprimir Todo"));
         btnSalir.addActionListener(e -> System.exit(0));
     }
