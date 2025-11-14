@@ -3,8 +3,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package dialogs;
+
+import examen.AppGeneral;
+import examen.Movie;
+import examen.RentItem;
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  *
@@ -22,6 +27,8 @@ public class DialogRentarItem extends JDialog {
 
     private final Color FONDO_NEGRO = new Color(10, 10, 10);
     private final Color BLUE_ELEGANTE = new Color(30, 144, 255);
+    private ArrayList<RentItem> items = AppGeneral.getItems();
+    private RentItem itemEncontrado;
 
     public DialogRentarItem(Frame owner) {
         super(owner, "Rentar Ítem", true);
@@ -122,11 +129,120 @@ public class DialogRentarItem extends JDialog {
 
         add(panelInferior, BorderLayout.SOUTH);
 
-        btnBuscar.addActionListener(e -> buscarItemVisual());
-        btnCalcular.addActionListener(e -> calcularRentaVisual());
+        btnBuscar.addActionListener(e -> {
+
+            String codigoStr = txtCodigo.getText().trim();
+            if (codigoStr.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Ingrese un código primero.", "Aviso",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int codigoBuscado;
+            try {
+                codigoBuscado = Integer.parseInt(codigoStr);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "El código debe ser numérico.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            itemEncontrado = null;
+            for (RentItem ri : items) {    
+                if (ri.getCodigoItem() == codigoBuscado) {
+                    itemEncontrado = ri;
+                    break;
+                }
+            }
+
+            if (itemEncontrado == null) {
+                JOptionPane.showMessageDialog(this, "Item No Existe");
+                txtInfoItem.setText("");
+                lblImagenPreview.setIcon(null);
+                lblImagenPreview.setText("Sin imagen");
+                return;
+            }
+
+            String tipo;
+            String estado = "";
+
+            if (itemEncontrado instanceof Movie) {
+                tipo = "Movie";
+                estado = ((Movie) itemEncontrado).getEstado();
+            } else if (itemEncontrado instanceof Game) {
+                tipo = "Game";
+            } else {
+                tipo = "Otro";
+            }
+
+            txtInfoItem.setText("Código: " + itemEncontrado.getCodigoItem() + "\n"
+                    + "Nombre: " + itemEncontrado.getNombreItem() + "\n"
+                    + "Tipo: " + tipo + "\n"
+                    + "Precio base: Lps " + itemEncontrado.getBaseRenta() + "\n"
+                    + (tipo.equals("Movie") ? "Estado: " + estado : "")
+            );
+
+            // Imagen
+            ImageIcon icon = itemEncontrado.getImagen();
+            if (icon != null) {
+                Image img = icon.getImage().getScaledInstance(150, 180, Image.SCALE_SMOOTH);
+                lblImagenPreview.setIcon(new ImageIcon(img));
+                lblImagenPreview.setText("");
+            } else {
+                lblImagenPreview.setIcon(null);
+                lblImagenPreview.setText("Sin imagen");
+            }
+        });
+
+        btnCalcular.addActionListener(e -> {
+
+            if (itemEncontrado == null) {
+                JOptionPane.showMessageDialog(this,
+                        "Primero debe buscar y seleccionar un ítem.",
+                        "Aviso",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            String diasStr = txtDias.getText().trim();
+            if (diasStr.isEmpty()) {
+                JOptionPane.showMessageDialog(this,
+                        "Ingrese la cantidad de días.",
+                        "Aviso",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int dias;
+            try {
+                dias = Integer.parseInt(diasStr);
+                if (dias <= 0) {
+                    JOptionPane.showMessageDialog(this,
+                            "Los días deben ser mayores que 0.",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Ingrese un número válido de días.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            double total = itemEncontrado.pagoRenta(dias);
+
+            JOptionPane.showMessageDialog(this,
+                    "Ítem: " + itemEncontrado.getNombreItem() + "\n"
+                    + "Días de renta: " + dias + "\n"
+                    + "Monto total: Lps " + total,
+                    "Total de la renta",
+                    JOptionPane.INFORMATION_MESSAGE);
+        });
+
         btnCancelar.addActionListener(e -> dispose());
     }
-
 
     private JLabel crearLabel(String texto) {
         JLabel lbl = new JLabel(texto);
@@ -160,9 +276,7 @@ public class DialogRentarItem extends JDialog {
         return btn;
     }
 
-
-    private void buscarItemVisual() {
-        String codigo = txtCodigo.getText().trim();
+    private void buscarItemVisual(String codigo, String nombre, String tipo, double precio, String estado) {
 
         if (codigo.isEmpty()) {
             JOptionPane.showMessageDialog(
@@ -174,17 +288,17 @@ public class DialogRentarItem extends JDialog {
             return;
         }
 
-        txtInfoItem.setText(
-                "Simulación visual\n\n" +
-                "Código: " + codigo + "\n" +
-                "Nombre: (aquí el nombre del ítem)\n" +
-                "Tipo: Movie/Game\n" +
-                "Precio base: (aquí el precio base)\n" +
-                "Estado (si es Movie): ESTRENO / NORMAL"
-        );
+        StringBuilder sb = new StringBuilder();
+        sb.append("Código: ").append(codigo).append("\n");
+        sb.append("Nombre: ").append(nombre).append("\n");
+        sb.append("Tipo: ").append(tipo).append("\n");
+        sb.append("Precio base: Lps ").append(precio).append("\n");
 
-        lblImagenPreview.setText("Imagen del ítem");
-        lblImagenPreview.setIcon(null);
+        if ("Movie".equals(tipo)) {
+            sb.append("Estado: ").append(estado).append("\n");
+        }
+
+        txtInfoItem.setText(sb.toString());
     }
 
     private void calcularRentaVisual() {
@@ -235,17 +349,16 @@ public class DialogRentarItem extends JDialog {
 
         JOptionPane.showMessageDialog(
                 this,
-                "Simulación visual\n\n" +
-                "Código: " + codigo + "\n" +
-                "Días de renta: " + dias + "\n" +
-                "Monto total: aquí usarías item.pagoRenta(días).",
+                "Simulación visual\n\n"
+                + "Código: " + codigo + "\n"
+                + "Días de renta: " + dias + "\n"
+                + "Monto total: aquí usarías item.pagoRenta(días).",
                 "Total de la renta",
                 JOptionPane.INFORMATION_MESSAGE
         );
     }
-    
-    public static void main(String [] args)
-    {
-        
+
+    public static void main(String[] args) {
+
     }
 }

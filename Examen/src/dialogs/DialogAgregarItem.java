@@ -4,6 +4,7 @@
  */
 package dialogs;
 
+import examen.RentItem;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;

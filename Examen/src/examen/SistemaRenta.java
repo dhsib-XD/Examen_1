@@ -22,9 +22,10 @@ public class SistemaRenta extends JFrame {
     private JButton btnImprimir;
     private JButton btnSalir;
     private JLabel lblEstado;
-
+    
     private final Color AZUL = new Color(30, 144, 255);
     private final Color NEGRO = new Color(10, 10, 10);
+    
 
     public SistemaRenta() {
 
