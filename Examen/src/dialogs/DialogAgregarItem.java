@@ -311,8 +311,4 @@ public class DialogAgregarItem extends JDialog {
             lblImagenPreview.setText("");
         }
     }
-
-    public static void main(String[] args) {
-
-    }
 }

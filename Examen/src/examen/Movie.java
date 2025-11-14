@@ -152,9 +152,4 @@ public class Movie extends RentItem implements MenuActions {
             );
         }
     }
-
-    public static void main(String[] args) {
-
-    }
-
 }

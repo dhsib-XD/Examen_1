@@ -15,6 +15,8 @@ public class Examen {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        SistemaRenta sistemaRenta=new SistemaRenta();
+        sistemaRenta.setVisible(true);
     }
     
 }

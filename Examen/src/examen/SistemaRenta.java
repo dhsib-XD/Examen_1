@@ -5,6 +5,7 @@
 package examen;
 
 import dialogs.DialogAgregarItem;
+import dialogs.DialogMostrarTodo;
 import dialogs.DialogRentarItem;
 import javax.swing.*;
 import java.awt.*;
@@ -121,7 +122,6 @@ public class SistemaRenta extends JFrame {
                 return;
             }
 
-
             if (encontrado instanceof MenuActions) {
                 ((MenuActions) encontrado).subMenu();
             } else {
@@ -134,7 +134,10 @@ public class SistemaRenta extends JFrame {
             }
         });
 
-        btnImprimir.addActionListener(e -> setEstado("Opción seleccionada: Imprimir Todo"));
+        btnImprimir.addActionListener(e -> {
+            DialogMostrarTodo dlg = new DialogMostrarTodo(this, items); 
+            dlg.setVisible(true);
+        });
         btnSalir.addActionListener(e -> System.exit(0));
     }
 
@@ -156,9 +159,4 @@ public class SistemaRenta extends JFrame {
         lblEstado.setText(msg);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new SistemaRenta().setVisible(true);
-        });
-    }
 }

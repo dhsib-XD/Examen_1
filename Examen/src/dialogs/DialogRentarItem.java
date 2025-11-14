@@ -359,7 +359,4 @@ public class DialogRentarItem extends JDialog {
         );
     }
 
-    public static void main(String[] args) {
-
-    }
 }
