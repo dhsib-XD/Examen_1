@@ -62,7 +62,8 @@ public class Movie extends RentItem {
             montoTotal=baseRenta*dias;
         }
         
-        return montoTotal;     
+        return montoTotal;
+        
     }
 
 }
