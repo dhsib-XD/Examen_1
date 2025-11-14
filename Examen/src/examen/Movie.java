@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package examen;
+
 import java.util.Calendar;
 
 /**
@@ -10,5 +11,58 @@ import java.util.Calendar;
  * @author Nathan
  */
 public class Movie extends RentItem {
-    
+
+    Calendar fechaEstreno;
+
+    public Movie(int codigoItem, String nombreItem, double baseRenta) {
+        super(codigoItem, nombreItem, baseRenta);
+        this.fechaEstreno = Calendar.getInstance();
+    }
+
+    public void setFechaEstreno(Calendar fechaEstreno) {
+        this.fechaEstreno = fechaEstreno;
+    }
+
+    public Calendar getFechaEstreno() {
+        return fechaEstreno;
+    }
+
+    public String toString() {
+        super.toString();
+        return "\n estado" + "\nMovie";
+    }
+
+    public String getEstado() {
+        Calendar fechaLimite = Calendar.getInstance();
+        fechaLimite.add(Calendar.MONTH, -3);
+
+        if (!fechaEstreno.before(fechaLimite) && !fechaEstreno.after(fechaEstreno)) {
+            return "ESTRENO";
+        }
+        return "NORMAL";
+    }
+
+    double pagoRenta(int dias) {
+        String estado = getEstado();
+        int diasExtras;
+        double baseRenta = super.baseRenta;
+        double montoTotal=0;
+
+        if (estado.equalsIgnoreCase("ESTRENO") && dias > 2) {
+            diasExtras = dias - 2;
+            montoTotal=(baseRenta*2)+(diasExtras*50);
+        } else {
+            montoTotal=baseRenta*dias;
+        }
+        
+        if (estado.equalsIgnoreCase("NORMAL") && dias > 5) {
+            diasExtras = dias - 5;
+            montoTotal=(baseRenta*5)+(diasExtras*30);
+        } else {
+            montoTotal=baseRenta*dias;
+        }
+        
+        return montoTotal;     
+    }
+
 }
