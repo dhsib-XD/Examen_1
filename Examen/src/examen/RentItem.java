@@ -1,13 +1,45 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package examen;
+
+import javax.swing.ImageIcon;
 
 /**
  *
  * @author marye
  */
-public class RentItem {
+public abstract class RentItem {
+
+    protected int codigoItem;
+    protected String nombreItem;
+    protected double baseRenta;
+    protected int cantidadCopias;
+    protected ImageIcon imgItem;
+
+    public RentItem(int codigoItem, String nombreItem, double baseRenta) {
+        this.codigoItem = codigoItem;
+        this.nombreItem = nombreItem;
+        this.baseRenta = baseRenta;
+        this.cantidadCopias = 0;
+    }
     
+    abstract double pagoRenta(int días);
+    
+    public int getCodigoItem(){
+        return codigoItem;
+    }
+    
+    public String getNombreItem(){
+        return nombreItem;
+    }
+    
+    public double getBaseRenta(){
+        return baseRenta;
+    }
+    
+    public int getCantidadCopias(){
+        return cantidadCopias;
+    }
+    
+    public String toString(){
+        return "Codigo: "+codigoItem+"\n Nombre: "+nombreItem+"\n Base Renta: "+baseRenta+"\nCantidad de copias: "+cantidadCopias;
+    }
 }
