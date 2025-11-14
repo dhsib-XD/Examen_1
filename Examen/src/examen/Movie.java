@@ -33,6 +33,15 @@ public class Movie extends RentItem implements MenuActions {
     }
 
     public String getEstado() {
+        if (fechaEstreno.after(fechaEstreno)) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Error: La fecha no puede ser mayor a la fecha actual.",
+                    "Fecha inválida",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+
         Calendar fechaLimite = Calendar.getInstance();
         fechaLimite.add(Calendar.MONTH, -3);
 
@@ -143,10 +152,9 @@ public class Movie extends RentItem implements MenuActions {
             );
         }
     }
-    
-    public static void main(String [] args)
-    {
-        
+
+    public static void main(String[] args) {
+
     }
 
 }
